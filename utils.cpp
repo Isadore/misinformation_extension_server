@@ -1,4 +1,8 @@
 #include "utils.h"
+#include <fstream>
+#include <string> // for getline
+
+using namespace std;
 
 string Utils::getFile(string path) {
     string text = "";
