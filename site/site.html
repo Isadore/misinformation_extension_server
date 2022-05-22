@@ -10,26 +10,37 @@
                 $('#analysis_header').html('')
                 $('#analysis_output').html('')
             }
+            function clearInput() {
+                $('textarea').val("")
+            }
+            function runSample(number) {
+                $.get('/samples', {number}, (data) => {
+                   $('textarea').val(data)
+                   runAnalysis(data)
+                })
+            }
             function runAnalysis() {
+                clearFields()
                 let text = $('textarea').val()
                 $('img').show();
                 $.ajax({
                     method: 'POST',
                     url: '/text_analysis',
-                    data: JSON.stringify({ text }),
+                    data: JSON.stringify({ text, sample }),
                     headers: {
                         "content-Type": "application/json; charset=utf-8"
                     },
                     success: (data) => {
                         $('img').hide()
-                        if(text) {
-                            $('#text_header').html('Text:')
-                            $('#text_output').html(text)
-                            $('#analysis_header').html('Analysis Result:')
-                            $('#analysis_output').html(JSON.parse(data)["description"])
-                        } else {
-                            clearFields()
-                        }
+                        try {
+                            let parsed = JSON.parse(data)
+                            if(text && parsed["description"]) {
+                                $('#text_header').html('Text:')
+                                $('#text_output').html(text)
+                                $('#analysis_header').html('Analysis Result:')
+                                $('#analysis_output').html(JSON.parse(data)["description"])
+                            }
+                        } catch(ignored) {}
                     },
                     error: (xhr, status, err) => {
                         clearFields()
@@ -41,8 +52,17 @@
         </script>
     </head>
     <body>
-        <textarea placeholder="Enter text" rows="10" cols="50"></textarea><br><br>
-        <button onclick="runAnalysis()">Analyze Text</button>
+        <h1>Text Polarity and Subjectivity Analysis</h1>
+        <h2>Using Python Textblob on a C++ Web Server</h2>
+        <p>This tool is meant to give a quick overview of news articles and other texts without having to do any reading.</p>
+        <p>Unfortunately, in my brief testing it seems to be more effective on shorter items such as social media posts.</p>
+        <textarea placeholder="Enter custom text or choose a sample below!" rows="10" cols="50"></textarea>
+        <br><br>
+        <button id="analyze" onclick="runAnalysis()">Analyze Text</button>
+        <button style="background-color: red; font-size: medium;" onclick="clearFields(); clearInput()">Clear text</button>
+        <button id="sample" onclick="runSample(1)">Sample 1</button>
+        <button id="sample" onclick="runSample(2)">Sample 2</button>
+        <button id="sample" onclick="runSample(3)">Sample 3</button>
         <img src="/loading.gif" width="50" height="30" style="padding-left: 1%; padding-top: 1%;" hidden>
         <h3 id="analysis_header"></h3>
         <pre id="analysis_output"></pre>
