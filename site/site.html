@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="site.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script>
+            // function clearFields() {
+                // $('#text_header').html('')
+                // $('#text_output').html('')
+                // $('#analysis_header').html('')
+                // $('#analysis_output').html('')
+            // }
+            function runAnalysis() {
+                let text = $('textarea').val()
+                $.get(`/text_analysis?text=${encodeURIComponent(text)}`, (data) => {
+                    if(text) {
+                        $('#text_header').html('Text:')
+                        $('#text_output').html(text)
+                        $('#analysis_header').html('Analysis Result:')
+                        $('#analysis_output').html(data)
+                    } else {
+                        clearFields()
+                    }
+                })
+            };
+        </script>
+    </head>
+    <body>
+        <textarea placeholder="Enter text" rows="10" cols="50"></textarea><br><br>
+        <button onclick="runAnalysis()">Analyze Text</button>
+        <h3 id="text_header"></h3>
+        <p id="text_output"></p>
+        <h3 id="analysis_header"></h3>
+        <p id="analysis_output"></p>
+    </body>
+</html>
