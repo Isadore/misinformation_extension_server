@@ -48,8 +48,6 @@ void CustomServer::listeners() {
         if(req.has_param("number")) {
             try {
                 string param = req.get_param_value("number");
-                const string command = "echo \"" + param + "\"";
-                system(command.c_str());
                 int sample_number = stoi(param);
                 if(sample_number > 0 && sample_number < 4) {
                     string sample = Utils::getFile("./site/samples/" + param + ".txt");
