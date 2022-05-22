@@ -14,3 +14,10 @@ button {
     min-height: 40px;
     line-height: 20px;
 }
+
+#sample {
+    background-color: brown;
+    padding-right: 5px;
+    padding-left: 5px;
+    font-size: medium;
+}
