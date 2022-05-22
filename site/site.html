@@ -4,22 +4,37 @@
         <link rel="stylesheet" href="site.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script>
-            // function clearFields() {
-                // $('#text_header').html('')
-                // $('#text_output').html('')
-                // $('#analysis_header').html('')
-                // $('#analysis_output').html('')
-            // }
+            function clearFields() {
+                $('#text_header').html('')
+                $('#text_output').html('')
+                $('#analysis_header').html('')
+                $('#analysis_output').html('')
+            }
             function runAnalysis() {
                 let text = $('textarea').val()
-                $.get(`/text_analysis?text=${encodeURIComponent(text)}`, (data) => {
-                    if(text) {
-                        $('#text_header').html('Text:')
-                        $('#text_output').html(text)
-                        $('#analysis_header').html('Analysis Result:')
-                        $('#analysis_output').html(data)
-                    } else {
+                $('img').show();
+                $.ajax({
+                    method: 'POST',
+                    url: '/text_analysis',
+                    data: JSON.stringify({ text }),
+                    headers: {
+                        "content-Type": "application/json; charset=utf-8"
+                    },
+                    success: (data) => {
+                        $('img').hide()
+                        if(text) {
+                            $('#text_header').html('Text:')
+                            $('#text_output').html(text)
+                            $('#analysis_header').html('Analysis Result:')
+                            $('#analysis_output').html(JSON.parse(data)["description"])
+                        } else {
+                            clearFields()
+                        }
+                    },
+                    error: (xhr, status, err) => {
                         clearFields()
+                        $('img').hide()
+                        $('#analysis_output').html("Error analyzing text: " + err)
                     }
                 })
             };
@@ -28,9 +43,10 @@
     <body>
         <textarea placeholder="Enter text" rows="10" cols="50"></textarea><br><br>
         <button onclick="runAnalysis()">Analyze Text</button>
+        <img src="/loading.gif" width="50" height="30" style="padding-left: 1%; padding-top: 1%;" hidden>
+        <h3 id="analysis_header"></h3>
+        <pre id="analysis_output"></pre>
         <h3 id="text_header"></h3>
         <p id="text_output"></p>
-        <h3 id="analysis_header"></h3>
-        <p id="analysis_output"></p>
     </body>
 </html>
