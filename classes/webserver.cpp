@@ -47,6 +47,32 @@ void WebServer::listeners() {
         }
     });
 
+    this->server.Get("/samples", [](const httplib::Request& req, httplib::Response& res) {
+        bool failed = false;
+        if(req.has_param("number")) {
+            try {
+                string param = req.get_param_value("number");
+                const string command = "echo \"" + param + "\"";
+                system(command.c_str());
+                int sample_number = stoi(param);
+                if(sample_number > 0 && sample_number < 4) {
+                    string sample = Utils::getFile("./site/samples/" + param + ".txt");
+                    res.set_content(sample, "text/plain");
+                } else {
+                    failed = true;
+                }
+            } catch(...) {
+                failed = true;
+            }
+        } else {
+            failed = true;
+        }
+        if(failed) {
+            res.status = 400;
+            res.set_content("400: Invalid parameters", "text/plain");
+        }
+    });
+
 }
 
 void WebServer::start() {
