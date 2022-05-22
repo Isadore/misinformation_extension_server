@@ -1,6 +1,7 @@
 #include "utils.h"
 #include <fstream>
 #include <string> // for getline
+#include <regex>
 #include "../libs/nlohmann/json.hpp"
 #include "../libs/uuid.h"
 
@@ -56,6 +57,7 @@ void Utils::addAnalysisDescription(string& jsonstr) {
     jsonstr = j1.dump(); 
 }
 
-string Utils::sanitizeText(string text) {
-
+void Utils::sanitizeText(string& text) {
+    regex r("[\"\']+");
+    text = regex_replace(text, r, "", regex_constants::match_any);
 }
