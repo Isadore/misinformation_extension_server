@@ -42,19 +42,38 @@ void Utils::addAnalysisDescription(string& jsonstr) {
     nlohmann::json j1 = nlohmann::json::parse(jsonstr);
     float polarity = j1["polarity"];
     float subjectivity = j1["subjectivity"];
-    if(polarity == 0 && subjectivity == 0) {
-        j1["description"] = "Text is either too short to analyze or completely neutral";
-    }
+    string description = "";
     if(polarity < -.9) {
-        j1["description"] = "Text is extremely negative";
+        description = "Text is extremely negative";
     } else if(polarity < -.6) {
-        j1["description"] = "Text is fairly negative";
+        description = "Text is very negative";
     } else if(polarity < -.3) {
-        j1["description"] = "Text is moderately negative";
+        description = "Text is moderately negative";
     } else if(polarity < 0) {
-        j1["description"] = "Text is slightly negative";
+        description = "Text is slightly negative";
+    } else if(polarity < .3) {
+        description = "Text is slightly positive";
+    } else if(polarity < .6) {
+        description = "Text is moderately positive";
+    } else if(polarity < .9) {
+        description = "Text is very positive";
+    } else {
+        description = "Text is extremely positive";
     }
-    jsonstr = j1.dump(); 
+    if(subjectivity < .3) {
+        description += "\nText is slightly subjective";
+    } else if(subjectivity < .6) {
+        description += "\nText is moderately subjective";
+    } else if(subjectivity < .9) {
+        description += "\nText is very subjective";
+    } else {
+        description += "\nText is extremely subjective";
+    }
+    if(polarity == 0 && subjectivity == 0) {
+        description = "Text is either too short to analyze or completely neutral";
+    }
+    j1["description"] = description;
+    jsonstr = j1.dump();
 }
 
 void Utils::sanitizeText(string& text) {
