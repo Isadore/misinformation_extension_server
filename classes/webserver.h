@@ -19,7 +19,6 @@ class WebServer {
         void start();
         void stop();
 
-
 };
 
 #endif
