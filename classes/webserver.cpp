@@ -1,6 +1,8 @@
 #include "webserver.h"
 #include "utils.h"
 #include <iostream>
+#include "../libs/nlohmann/json.hpp"
+
 
 using namespace std;
 
@@ -21,11 +23,14 @@ void WebServer::listeners() {
         res.set_content(page, "image/gif");
     });
 
-    this->server.Get("/text_analysis", [](const httplib::Request& req, httplib::Response& res) {
-        if(req.has_param("text")) {
+    this->server.Post("/text_analysis", [](const httplib::Request& req, httplib::Response& res) {
+        nlohmann::json data = nlohmann::json::parse(req.body.c_str(), nullptr, false);
+        if(data.contains("text")) {
             try {
                 const string uuid = Utils::generateUUID();
-                const string command = "python3 ./textanalysis.py \"" + req.get_param_value("text") + "\" \"" + uuid + "\"";
+                string text = data["text"];
+                Utils::sanitizeText(text);
+                const string command = "python3 ./textanalysis.py \"" + text + "\" \"" + uuid + "\"";
                 system(command.c_str());
                 string filepath = "./analysis_" + uuid + ".json";
                 string analysisResult = Utils::getFile(filepath);
@@ -34,7 +39,7 @@ void WebServer::listeners() {
                 remove(filepath.c_str());
             } catch (string ex) {
                 res.status = 500;
-                res.set_content("sample error message", "text/plain");
+                res.set_content(ex, "text/plain");
             }
         } else {
             res.status = 400;
