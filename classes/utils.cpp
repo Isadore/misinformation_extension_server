@@ -53,6 +53,8 @@ void Utils::addAnalysisDescription(string& jsonstr) {
         description = "Text is moderately negative";
     } else if(polarity < 0) {
         description = "Text is slightly negative";
+    } else if(polarity == 0) {
+        description = "Text is likely neutral";
     } else if(polarity < .3) {
         description = "Text is slightly positive";
     } else if(polarity < .6) {
@@ -62,7 +64,9 @@ void Utils::addAnalysisDescription(string& jsonstr) {
     } else {
         description = "Text is extremely positive";
     }
-    if(subjectivity < .3) {
+    if(subjectivity < .1) {
+        description += "\nText is likely objective";
+    } else if(subjectivity < .3) {
         description += "\nText is slightly subjective";
     } else if(subjectivity < .6) {
         description += "\nText is moderately subjective";
