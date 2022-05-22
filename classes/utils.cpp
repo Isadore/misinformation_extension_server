@@ -7,6 +7,7 @@
 
 using namespace std;
 
+// modified code from https://www.cplusplus.com/reference/istream/istream/read/
 string Utils::getFile(string path) {
     ifstream file(path, ifstream::binary);
     if(!file || !file.is_open()) {
@@ -27,6 +28,7 @@ string Utils::getFile(string path) {
     }
 }
 
+//code from https://github.com/mariusbancila/stduuid
 string Utils::generateUUID() {
     random_device rd;
     auto seed_data = array<int, mt19937::state_size> {};
