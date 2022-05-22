@@ -5,19 +5,18 @@
 #include <iostream>
 using namespace std;
 
-class WebServer {
-
-    httplib::Server server;
+class WebServer : protected httplib::Server {
+    
     int PORT;
     string IP;
 
-    private:
-        void listeners();
+    protected:
+        virtual void listeners() = 0;
     
     public:
         WebServer(string ip, int port);
         void start();
-        void stop();
+        void end();
 
 };
 
