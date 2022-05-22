@@ -22,32 +22,34 @@
             function runAnalysis() {
                 clearFields()
                 let text = $('textarea').val()
-                $('img').show();
-                $.ajax({
-                    method: 'POST',
-                    url: '/text_analysis',
-                    data: JSON.stringify({ text, sample }),
-                    headers: {
-                        "content-Type": "application/json; charset=utf-8"
-                    },
-                    success: (data) => {
-                        $('img').hide()
-                        try {
-                            let parsed = JSON.parse(data)
-                            if(text && parsed["description"]) {
-                                $('#text_header').html('Text:')
-                                $('#text_output').html(text)
-                                $('#analysis_header').html('Analysis Result:')
-                                $('#analysis_output').html(JSON.parse(data)["description"])
-                            }
-                        } catch(ignored) {}
-                    },
-                    error: (xhr, status, err) => {
-                        clearFields()
-                        $('img').hide()
-                        $('#analysis_output').html("Error analyzing text: " + err)
-                    }
-                })
+                if(text) {
+                    $('img').show();
+                    $.ajax({
+                        method: 'POST',
+                        url: '/text_analysis',
+                        data: JSON.stringify({ text, sample }),
+                        headers: {
+                            "content-Type": "application/json; charset=utf-8"
+                        },
+                        success: (data) => {
+                            $('img').hide()
+                            try {
+                                let parsed = JSON.parse(data)
+                                if(text && parsed["description"]) {
+                                    $('#text_header').html('Text:')
+                                    $('#text_output').html(text)
+                                    $('#analysis_header').html('Analysis Result:')
+                                    $('#analysis_output').html(JSON.parse(data)["description"])
+                                }
+                            } catch(ignored) {}
+                        },
+                        error: (xhr, status, err) => {
+                            clearFields()
+                            $('img').hide()
+                            $('#analysis_output').html("Error analyzing text: " + err)
+                        }
+                    })
+                }
             };
         </script>
     </head>
